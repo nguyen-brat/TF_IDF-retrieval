@@ -15,7 +15,7 @@ def transform_input(text):
 def find_max(text, k):
     vectorize = transform_input(text)
     similar = np.matmul(vectorize, np.transpose(transform_output.toarray()))/(norm(vectorize)*norm(transform_output.toarray(), axis = 1))
-    top_k = np.argpartition(similar.reshape(len(similar[0])), k)[-k:]
+    top_k = np.argpartition(similar.reshape(len(similar[0])), -k)[-k:]
     return top_k
 
 if __name__ == '__main__':
@@ -23,8 +23,10 @@ if __name__ == '__main__':
     parser.add_argument("--input", type=str , help="input sentence need to ask")
     parser.add_argument("--k", type=int, default=3, help="top k output")
     args = parser.parse_args()
+    
+    
     data_path = glob.glob(os.getcwd() + "\dataset\Data\*\*")
-    tfidf_transform = TfidfVectorizer(input = 'filename')
+    tfidf_transform = TfidfVectorizer(input = 'filename', ngram_range = (1, 3))
     transform_output = tfidf_transform.fit_transform(data_path)
     vocabulary = dict(sorted(tfidf_transform.vocabulary_.items(), key=lambda x: x[0]))
     if (args.input):
